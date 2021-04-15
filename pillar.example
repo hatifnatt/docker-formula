@@ -133,6 +133,7 @@ docker:
   # manage docker containers
   containers:
     traefik:
+      # optional, if 'ensure' key is not provided 'ensure: running' is assumed
       ensure: running
       # ensure: absent
       # ensure: stopped

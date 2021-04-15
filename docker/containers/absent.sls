@@ -8,7 +8,7 @@ include:
 {%- if 'containers' in d and d.containers %}
   {%- set absent_count = 0 %}
   {%- for id, container in d.containers|dictsort %}
-    {%- set ensure = container.pop('ensure', 'absent') %}
+    {%- set ensure = container.pop('ensure', '') %}
     {%- set name = container.pop('name', '') if 'name' in container else id %}
     {%- if ensure == 'absent' %}
       {%- set absent_count =  absent_count + 1 %}

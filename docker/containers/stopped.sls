@@ -5,7 +5,7 @@
 {%- if 'containers' in d and d.containers %}
   {%- set stopped_count = 0 %}
   {%- for id, container in d.containers|dictsort %}
-    {%- set ensure = container.pop('ensure', 'stopped') %}
+    {%- set ensure = container.pop('ensure', '') %}
     {%- set name = container.pop('name', '') if 'name' in container else id %}
     {#- Stop container if it supposed to be stopped or removed #}
     {%- if ensure in ('stopped', 'absent') %}
