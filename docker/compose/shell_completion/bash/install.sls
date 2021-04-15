@@ -18,6 +18,7 @@ docker_compose_shell_completion_bash_install:
     - source: {{ d.compose.shell_completion.bash.source if d.compose.shell_completion.bash.source else bc_source }}
     - skip_verify: true
     - show_changes: false
+    - makedirs: true
 
 {%- else %}
 docker_compose_shell_completion_bash_install_notice:
