@@ -1,0 +1,4 @@
+include:
+  - .stopped
+  - .absent
+  - .running

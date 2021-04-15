@@ -1,0 +1,13 @@
+---
+# os: Debian
+Debian-10: {}
+
+Debian-9: {}
+
+# os: CentOS
+CentOS Linux-8: {}
+
+CentOS Linux-7: {}
+
+# os: RedHat?
+Red Hat Enterprise Linux Server-7: {}

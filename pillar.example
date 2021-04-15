@@ -1,0 +1,140 @@
+docker:
+  # repository setting, will differ for diffirent os families, see osfamilymap for example
+  repo: {}
+  # docker server setting
+  server:
+    # install or not docker server (daemon)
+    install: true
+    # installation method for docker server
+    # repo, package - install form official repo with system packages (deb, rpm)
+    # binary - install via official pre compiled static binaries, *not implemented yet*
+    use_upstream: repo
+    # parameters for package installation method, official Docker repository will be used
+    package:
+      pkgs:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+      hold: false
+      update_holds: true
+    # install extra dependencies required for docker daemon to operate properly
+    # they will be installed *before* main package(s)
+    extra:
+      # list of packages to install
+      pkgs:
+        # python-docker package is mandatory (where available),
+        # required for salt to communicate with docker daemon
+        - python3-docker
+        - iptables
+        - procps
+        - pigz
+        - xz-utils
+    # install packages via pip when required system packages are not available or too old
+    # i.e. python-docker package is not available or too old on CentOS, RedHat
+    # https://github.com/saltstack/salt/issues/58920#issuecomment-726328964
+    # by default pip packages are used on RedHat family systems only
+    pip:
+      # system package with pip utility
+      package: python3-pip
+      # list of packages to install with pip
+      pkgs:
+        - docker
+    # parameters for binary installation method, official pre compiled static binaries will be used
+    # not implemented yet
+    binary: {}
+    # configuration of docker daemon
+    config:
+      file: /etc/docker/daemon.json
+      data: {}
+    # docker daemon service settings
+    service:
+      name: docker
+      status: running
+      enable: true
+      reload: true
+  # docker-compose related data
+  compose:
+    # install or not docker-compose
+    install: true
+    # docker-compose installation methon
+    # only binary implemented for now, due lack of alternatives
+    install_method: binary
+    version: 1.29.0
+    # symlink this to desired docker-compose version in `version_dir` directory
+    bin: /usr/local/bin/docker-compose
+    # different versions of docker-compose will be saved in this directory
+    # as %version_dir%/docker-compose-%version%
+    version_dir: /usr/local/lib/docker-compose
+    # shell completion for docker compose
+    # https://docs.docker.com/compose/completion/
+    shell_completion:
+      bash:
+        install: true
+        # system bash-completion package
+        package: bash-completion
+        # source with bash-completion script for docker-compose, will be used 'as is'
+        source: ''
+        # default source is generated from multiple variables: %download_remote%/%version%/%remote_path%
+        download_remote: https://raw.githubusercontent.com/docker/compose/
+        remote_path: contrib/completion/bash/docker-compose
+        # where to install bash-completion script
+        dir: /etc/bash_completion.d
+    # docker-compose binary installation method parameters
+    binary:
+      # source for docker-compose itself
+      # absolute url for file.managed 'source' parameter, will be used 'as is'
+      source: ''
+      # source for file with checksum for docker-compose binary
+      # absolute url for file.managed 'source_hash' parameter, will be used 'as is'
+      source_hash: ''
+      # default source is generated from multiple variables and grains:
+      # %download_remote%/%version%/docker-compose-%grains.kernel%-%grains.cpuarch%
+      download_remote: https://github.com/docker/compose/releases/download/
+      source_hash_remote: https://github.com/docker/compose/releases/download/
+  # manage docker volumes
+  volumes:
+    # volume id, will be used as volume name if 'name' not specified explicitly
+    # minimum required declaration - only id
+    foo: {}
+    bar:
+      # ensure mode (optional) - 'present' or 'absent', volume will be created or removed respectively
+      # default is 'present'
+      ensure: present
+      # ensure: absent
+    baz:
+      ensure: present
+      # this volume will have 'fizbuz' name
+      name: fizbuz
+      # any valid parameters for `docker_volume.present` state can be used
+      driver: local
+      driver_opts: {}
+    # this volume will be removed
+    zap:
+      ensure: absent
+  # manage docker networks
+  networks:
+    # network id, will be used as network name if 'name' not specified explicitly
+    proxy-net:
+      # ensure mode (optional) - 'present' or 'absent', network will be created or removed respectively
+      # default is 'present'
+      ensure: present
+      # ensure: absent
+    mynet:
+      ensure: present
+      # any valid parameters for `docker_network.present` state can be used
+      driver: macvlan
+      driver_opts:
+        - macvlan_mode: bridge
+        - parent: eth0
+      labels:
+        - foo
+        - bar=baz
+        - hello: world
+  # manage docker containers
+  containers:
+    traefik:
+      ensure: running
+      # ensure: absent
+      # ensure: stopped
+      name: traefik-proxy
+      image: traefik:latest

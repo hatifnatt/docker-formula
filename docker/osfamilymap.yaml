@@ -1,0 +1,49 @@
+---
+Debian:
+  repo:
+    prerequisites:
+      - apt-transport-https
+      - ca-certificates
+    config:
+      name: deb [arch=amd64] https://download.docker.com/linux/{{ grains.os|lower }} {{ grains.oscodename }} stable
+      file: /etc/apt/sources.list.d/docker.list
+      key_url: https://download.docker.com/linux/{{ grains.os|lower }}/gpg
+      refresh: true
+  server:
+    extra:
+      pkgs:
+        # python-docker package is mandatory, required for salt to communicate with docker daemon
+        - python3-docker
+        - iptables
+        - procps
+        - pigz
+        - xz-utils
+
+RedHat:
+  repo:
+    prerequisites: []
+    config:
+      humanname: Docker CE Stable - $basearch
+      baseurl: https://download.docker.com/linux/{{ grains.os|lower }}/$releasever/$basearch/stable
+      file: /etc/yum.repos.d/docker-ce.repo
+      enabled: 1
+      gpgcheck: 1
+      gpgkey: https://download.docker.com/linux/{{ grains.os|lower }}/gpg
+  server:
+    extra:
+      pkgs:
+        # python-docker package is required for salt to communicate with docker daemon
+        # but it's too old on CentOS, RedHat, pip package will be used
+        - python3-dnf-plugin-versionlock # required for salt to hold a package version on RH derivatives
+        - iptables
+        - procps-ng
+        - pigz
+        - xz
+    # install python pip packages sometimes it's required due lack
+    # of fresh versions of software in system package repositories
+    # i.e. python-docker package is not available or too old on CentOS, RedHat
+    # https://github.com/saltstack/salt/issues/58920#issuecomment-726328964
+    pip:
+      package: python3-pip
+      pkgs:
+        - docker

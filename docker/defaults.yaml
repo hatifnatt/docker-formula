@@ -1,0 +1,48 @@
+docker:
+  repo: {}
+  server:
+    install: true
+    use_upstream: repo # repo, package / binary, binary is not implemented
+    package:
+      pkgs:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+      hold: false
+      update_holds: true
+    extra: {}
+    pip: {}
+    binary: {}
+    config:
+      file: /etc/docker/daemon.json
+      data: {}
+    service:
+      name: docker
+      status: running
+      enable: true
+      reload: true
+  compose:
+    install: true
+    install_method: binary
+    version: 1.29.0
+    bin: /usr/local/bin/docker-compose
+    version_dir: /usr/local/lib/docker-compose
+    shell_completion:
+      bash:
+        install: true
+        package: bash-completion
+        source: ''
+        # default source is: %download_remote%/%version%/%remote_path%
+        download_remote: https://raw.githubusercontent.com/docker/compose/
+        remote_path: contrib/completion/bash/docker-compose
+        dir: /etc/bash_completion.d
+    binary:
+      # absolute url for file.managed 'source' parameter, will be used 'as is'
+      source: ''
+      # absolute url for file.managed 'source_hash' parameter, will be used 'as is'
+      source_hash: ''
+      download_remote: https://github.com/docker/compose/releases/download/
+      source_hash_remote: https://github.com/docker/compose/releases/download/
+  volumes: {}
+  networks: {}
+  containers: {}
