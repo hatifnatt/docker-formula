@@ -95,7 +95,7 @@ docker:
   volumes:
     # volume id, will be used as volume name if 'name' not specified explicitly
     # minimum required declaration - only id
-    foo: {}
+    portainer_data: {}
     bar:
       # ensure mode (optional) - 'present' or 'absent', volume will be created or removed respectively
       # default is 'present'
@@ -135,7 +135,29 @@ docker:
     traefik:
       # optional, if 'ensure' key is not provided 'ensure: running' is assumed
       ensure: running
-      # ensure: absent
       # ensure: stopped
+      # ensure: absent
       name: traefik-proxy
       image: traefik:latest
+      restart_policy: always
+      binds:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+      command:
+        - '--api.insecure=true'
+        - '--providers.docker.watch=true'
+      publish:
+        - 8080:8080
+    portainer:
+      ensure: running
+      image: "portainer/portainer-ce:linux-amd64-2.1.1"
+      restart: always
+      command:
+        # set admin password (p@ssw0rd in this example)
+        - '--admin-password="$2y$05$ROLmgJ2bwAFgWLkOCouhTe/nJ/bEDgs6i1Cd856hbAMP2W8M2ra/O"'
+      binds:
+        - /var/run/docker.sock:/var/run/docker.sock
+        # portainer_data volume is defined under 'volumes' key
+        - portainer_data:/data
+      publish:
+        - 9000:9000
+        - 8000:8000
