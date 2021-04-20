@@ -1,0 +1,4 @@
+# Managed by SaltStack docker formula
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd {{ args|join(' ') if args }}

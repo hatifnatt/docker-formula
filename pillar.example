@@ -45,7 +45,11 @@ docker:
     # configuration of docker daemon
     config:
       file: /etc/docker/daemon.json
-      data: {}
+      data:
+        # by default try to use sockets provided by systemd
+        # for more info see https://github.com/moby/moby/issues/25471
+        hosts:
+          - fd://
     # docker daemon service settings
     service:
       name: docker

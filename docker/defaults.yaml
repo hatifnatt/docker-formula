@@ -15,12 +15,18 @@ docker:
     binary: {}
     config:
       file: /etc/docker/daemon.json
-      data: {}
+      data:
+        hosts:
+          - fd://
     service:
       name: docker
       status: running
       enable: true
+      # NOTE if configuration related to docker daemon sockets is changed
+      # full restart is required - 'reload: false' must be used
       reload: true
+      daemon_args:
+        - '--containerd=/run/containerd/containerd.sock'
   compose:
     install: true
     install_method: binary
