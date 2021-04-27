@@ -4,6 +4,7 @@
 
 {%- if d.server.install %}
 include:
+  - {{ tplroot }}.server.tls
   - {{ tplroot }}.server.service
 
 docker_server_config:

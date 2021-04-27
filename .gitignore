@@ -1,1 +1,3 @@
 .vscode
+docker/files/tls/*
+!docker/files/tls/README.md

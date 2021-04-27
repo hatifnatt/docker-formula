@@ -50,6 +50,29 @@ docker:
         # for more info see https://github.com/moby/moby/issues/25471
         hosts:
           - fd://
+          # if you want to expose TLS protected TCP socket it must be added to this list,
+          # and daemon must be restarted, reload is not enough to activate new socket!
+          # - tcp://0.0.0.0:2376
+        # TLS related options, more info in official docs
+        # https://docs.docker.com/engine/security/protect-access/#use-tls-https-to-protect-the-docker-daemon-socket
+        # NOTE:
+        # - there is no default values for TLS parameters
+        # - you MUST provide existing certificate and key via
+        #   docker:server:tls:key:source, docker:server:tls:cert:source or via
+        #   docker:server:tls:key:content, docker:server:tls:cert:content
+        #   alternatively selfsigned certificate can be created by providing
+        #   parameters in docker:server:tls:key:params, docker:server:tls:cert:params
+        # - if you provide path for tlskey, tlscert but files are not in place
+        #   docker daemon will fail to start
+        #
+        # enable TLS protected TCP socket
+        tls: false
+        tlskey: /etc/docker/tls/server-key.pem
+        tlscert: /etc/docker/tls/server-cert.pem
+        # enable client certificate verification
+        tlsverify: false
+        # client certificate will be validated against this CA certificate
+        tlscacert: /etc/docker/tls/ca.pem
     # docker daemon service settings
     service:
       name: docker
@@ -60,6 +83,75 @@ docker:
       reload: true
       daemon_args:
         - '--containerd=/run/containerd/containerd.sock'
+    tls:
+      # packages required to issue self signed certificates
+      pkgs:
+        - openssl
+        - python3-m2crypto
+      key:
+        # create symlink with name docker:server:config:data:tlskey
+        # 'source' will be used as the symlink target, it MUST be absolute path in this case
+        symlink: false
+        # source file for private key (tlskey)
+        # if source:
+        # - starts with 'salt://' it will be used 'as is'
+        #   this way arbitrary file from salt file server can be used
+        # - is an absolute path i.e. '/etc/pki/example.tld.key'
+        #   local (to minion) file will be used
+        # otherwise formula will search for file in `formula_root/files/tls/%key_source%`
+        source: ''
+        # you can provide private key and certificate data directly in pillars
+        # data from pillars does have higher priority, if values for:
+        # key:source, key:content both are present, data from key:content will be used
+        content: |
+            -----BEGIN RSA PRIVATE KEY-----
+            [Private key here]
+            -----END RSA PRIVATE KEY-----
+        # creation of self signed private key does have lowest priority
+        # key:source, key:content keys must be absent
+        # then key:params value will have effect and new private key will be created
+        # required minimum is a 'bits' parameter, usually 2048 bits are enough
+        params:
+          bits: 2048
+        # show changes (diff) when updating private key from 'source' or form 'content'
+        # when new key will be generated with x509.private_key_managed changes will always be displayed
+        show_changes: false
+      cert:
+        # create symlink with name docker:server:config:data:tlscert
+        # 'source' will be used as the symlink target, it MUST be absolute path in this case
+        symlink: false
+        # source file for certificate (tlscert), same rules as for key:source
+        source: ''
+        content: |
+            -----BEGIN CERTIFICATE-----
+            [Certificate here]
+            -----END CERTIFICATE-----
+        # parameters for self signed certificate, does have lowest priority
+        # cert:source, cert:content keys must be absent
+        # then cert:params value will have effect and self signed certificate will be issued
+        # almost any valid parameter of Salt x509.certificate_managed state can be used here
+        params:
+          days_valid: 3650
+          CN: example.tld
+          # use minion id as a Common Name
+          # CN: {{ grains.id }}
+          subjectAltName: "DNS:example.tld,DNS:www.example.tld,IP:127.0.0.1"
+        # show changes (diff) when updating certificate from 'source' or form 'content'
+        # when new cert will be issued with x509.certificate_managed changes will always be displayed
+        show_changes: false
+      # you need to provide 'tlscacert' if you want to use 'tlsverify' (verifly client certificate)
+      cacert:
+        # create symlink with name docker:server:config:data:tlscacert
+        # 'source' will be used as the symlink target, it MUST be absolute path in this case
+        symlink: false
+        # source file for tlscacert, same rules as for key:source
+        source: ''
+        content: |
+            -----BEGIN CERTIFICATE-----
+            [CA Certificate here]
+            -----END CERTIFICATE-----
+        # show changes (diff) when updating CA certificate from 'source' or form 'content'
+        show_changes: false
   # docker-compose related data
   compose:
     # install or not docker-compose

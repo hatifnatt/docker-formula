@@ -3,6 +3,8 @@
 #
 # Collection of common macros
 
+{% set tplroot = tplfile.split('/')[0] %}
+
 {%- macro format_kwargs(kwarg) -%}
   {%- if kwarg and kwarg is mapping %}
 
@@ -15,8 +17,16 @@
   {%- endif %}
 {%- endmacro %}
 
-{% macro sls_block(dict) %}
-    {% for key, value in dict.items() %}
-    - {{ key }}: {{ value|json(sort_keys=False) }}
-    {% endfor %}
-{% endmacro %}
+{% macro build_source(source='', path_prefix='', default_source='', indent_width=6) -%}
+{% set url = '' -%}
+{% if source -%}
+  {%- if source.startswith('salt://') or source.startswith('/') %}
+    {%- set url = '- ' ~ source %}
+  {%- else %}
+    {%- set url = salt['file.join']('- salt://', tplroot, path_prefix, source) %}
+  {%- endif %}
+{% else -%}
+  {%- set url = salt['file.join']('- salt://', tplroot, path_prefix, default_source) %}
+{% endif -%}
+{{ url|indent(indent_width, True) }}
+{%- endmacro %}

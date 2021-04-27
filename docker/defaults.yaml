@@ -27,6 +27,24 @@ docker:
       reload: true
       daemon_args:
         - '--containerd=/run/containerd/containerd.sock'
+    tls:
+      pkgs:
+        - openssl
+        - python3-m2crypto
+      key:
+        symlink: false
+        source: ''
+        content: ''
+        params: {}
+      cert:
+        symlink: false
+        source: ''
+        content: ''
+        params: {}
+      cacert:
+        symlink: false
+        source: ''
+        content: ''
   compose:
     install: true
     install_method: binary

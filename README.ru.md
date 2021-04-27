@@ -8,6 +8,7 @@
 * [docker.repo](#docker.repo)
 * [docker.server](#docker.server)
 * [docker.server.config](#docker.server.config)
+* [docker.server.tls](#docker.server.tls)
 * [docker.server.service](#docker.server.service)
 * [docker.server.software.binary](#docker.server.software.binary)
 * [docker.server.software.package](#docker.server.software.package)
@@ -42,6 +43,71 @@
 ### docker.server.config
 
 Стейт отвечающий за генерацию конфигурационного файла docker сервера, по умолчанию `/etc/docker/daemon.json` на основе данных из пилларов.
+
+### docker.server.tls
+
+Набор стейтов для управления TLS сертификатами для docker демона. Официальная [документация](https://docs.docker.com/engine/security/protect-access/#use-tls-https-to-protect-the-docker-daemon-socket) по защите TCP сокета с помощью TLS (=HTTPS).
+
+* key - создание приватного ключа
+* cert - создание сертификата
+* cacert - установка CA сертификата
+* packages - установка пакетов, необходимых для генерации самоподписного сертификата
+
+Docker демон поддерживает два режима работы TLS:
+
+* С проверкой сертификата клиента - в этом режиме требуется указать следующие параметры `tlsverify`, `tlscacert`, `tlscert`, `tlskey`
+* Без проверки сертификата клиента - в этом режиме нужны лишь `tls`, `tlscert`, `tlskey`
+
+Минимально необходимая конфигурация для включения HTTPS сокета с использованием самоподписного сертификата.
+
+```yaml
+docker:
+  server:
+    config:
+      data:
+        tls: true
+        tlskey: /etc/docker/tls/server-key.pem
+        tlscert: /etc/docker/tls/server-cert.pem
+        hosts:
+          - fd://
+          - tcp://0.0.0.0:2376
+    tls:
+      key:
+        params:
+          bits: 2048
+      cert:
+        params:
+          days_valid: 3650
+          # use minion id as a Common Name
+          CN: {{ grains.id }}
+          subjectAltName: "DNS:{{ grains.id }},IP:127.0.0.1"
+```
+
+Конфигурация с проверкой клиентского сертификата, используются символические ссылки на готовые сертификаты расположенные на миньоне (они предвариательно выпущены с помощью `pki` формулы), в качестве CA сертификата используется системная цепочка CA сертификатов (указан путь для Debian систем).
+
+```yaml
+docker:
+  server:
+    config:
+      data:
+        tlsverify: false
+        tlscacert: /etc/docker/tls/ca.pem
+        tlskey: /etc/docker/tls/server-key.pem
+        tlscert: /etc/docker/tls/server-cert.pem
+        hosts:
+          - fd://
+          - tcp://0.0.0.0:2376
+    tls:
+      key:
+        symlink: true
+        source: /etc/pki/api/docker-server.key
+      cert:
+        symlink: true
+        source: /etc/pki/api/docker-server.crt
+      cacert:
+        symlink: true
+        source: /etc/ssl/certs/ca-certificates.crt
+```
 
 ### docker.server.service
 
