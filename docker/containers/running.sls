@@ -22,7 +22,7 @@ docker_containers_running_{{ id }}:
       - sls: {{ tplroot }}.networks.manage
     {%- endif %}
 
-    {%- if running_count == 0 %}
+    {%- if loop.last and running_count == 0 %}
 docker_containers_running_zero_count:
   test.show_notification:
     - name: docker_containers_running_zero_count

@@ -16,7 +16,7 @@ docker_containers_stopped_{{ id }}:
     {{- format_kwargs(container) }}
     {%- endif %}
 
-    {%- if stopped_count == 0 %}
+    {%- if loop.last and stopped_count == 0 %}
 docker_containers_stopped_zero_count:
   test.show_notification:
     - name: docker_containers_stopped_zero_count

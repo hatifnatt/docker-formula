@@ -19,7 +19,7 @@ docker_containers_absent_{{ id }}:
       - sls: {{ tplroot }}.containers.stopped
     {%- endif %}
 
-    {%- if absent_count == 0 %}
+    {%- if loop.last and absent_count == 0 %}
 docker_containers_absent_zero_count:
   test.show_notification:
     - name: docker_containers_absent_zero_count
