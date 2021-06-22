@@ -13,11 +13,23 @@ Debian:
     extra:
       pkgs:
         # python-docker package is mandatory, required for salt to communicate with docker daemon
+        # but it have dependencies (python3-dockerpycreds -> golang-docker-credential-helpers)
+        # which cause issues with 'docker login'
         - python3-docker
         - iptables
         - procps
         - pigz
         - xz-utils
+        # install pass as a workaround for 'docker login' problem like:
+        # Error saving credentials: error storing credentials - err: exit status 1, out:
+        # `Cannot autolaunch D-Bus without X11 $DISPLAY`
+        # yes there is about 10 packages will be installed as dependencies
+        # but this is least intrusive solution
+        # links to related bugs and discussions
+        # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=910822
+        # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=910823
+        # https://stackoverflow.com/questions/51222996/docker-login-fails-on-a-server-with-no-x11-installed
+        - pass
 
 RedHat:
   repo:
