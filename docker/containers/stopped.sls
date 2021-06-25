@@ -13,6 +13,7 @@
 docker_containers_stopped_{{ id }}:
   docker_container.stopped:
     - name: {{ name }}
+    - error_on_absent: false
     {{- format_kwargs(container) }}
     {%- endif %}
 
