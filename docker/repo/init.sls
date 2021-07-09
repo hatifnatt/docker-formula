@@ -19,4 +19,5 @@ docker_repo:
     {{- format_kwargs(d.repo.config) }}
 {%- else %}
     - absent
+    - name: {{ d.repo.config.name }}
 {%- endif %}
