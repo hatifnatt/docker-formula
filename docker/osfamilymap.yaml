@@ -35,9 +35,9 @@ RedHat:
   repo:
     prerequisites: []
     config:
+      name: docker-ce-stable
       humanname: Docker CE Stable - $basearch
       baseurl: https://download.docker.com/linux/{{ grains.os|lower }}/$releasever/$basearch/stable
-      file: /etc/yum.repos.d/docker-ce.repo
       enabled: 1
       gpgcheck: 1
       gpgkey: https://download.docker.com/linux/{{ grains.os|lower }}/gpg
