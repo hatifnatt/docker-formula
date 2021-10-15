@@ -69,4 +69,5 @@ docker:
       source_hash_remote: https://github.com/docker/compose/releases/download/
   volumes: {}
   networks: {}
+  images: {}
   containers: {}

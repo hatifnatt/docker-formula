@@ -230,6 +230,26 @@ docker:
         - foo
         - bar=baz
         - hello: world
+  # manage docker images
+  # usually you only need to manually manage images when you want to forcefully pull fresh image for "floating" or
+  # "rolling" tag, i.e. 'latest', it's a common practice when images tagged with major version of product are silently
+  # being updated in remote registry, and you usually want to pull latest available image for that tag
+  images:
+    # absolute minimal configuration, simply pull alpine:latest image
+    alpine: {}
+    # pull traefik image, if no tag provided 'latest' is assumed
+    traefik:
+      # optional, if 'ensure' key is not provided 'ensure: present' is assumed
+      ensure: present
+      # ensure: absent
+    # pull postgresql:12 image
+    postgresql:
+      tag: 12
+      # image for '12' tag can be update in the registry, let's assume we always want to pull
+      # latest available image for '12' tag, with 'force: true' image will be pulled on each state run
+      # NOTE in combination with 'ensure: absent' image will be removed even if it's currently in use by a container
+      # default is 'false'
+      force: true
   # manage docker containers
   containers:
     traefik:

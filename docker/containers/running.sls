@@ -5,6 +5,9 @@
 include:
   - {{ tplroot }}.volumes.manage
   - {{ tplroot }}.networks.manage
+  {#- Explicitly include states, due bug https://github.com/saltstack/salt/issues/10852 #}
+  - {{ tplroot }}.images.absent
+  - {{ tplroot }}.images.present
 
 {%- if 'containers' in d and d.containers %}
   {%- set running_count = 0 %}
@@ -20,6 +23,8 @@ docker_containers_running_{{ id }}:
     - require:
       - sls: {{ tplroot }}.volumes.manage
       - sls: {{ tplroot }}.networks.manage
+      - sls: {{ tplroot }}.images.absent
+      - sls: {{ tplroot }}.images.present
     {%- endif %}
 
     {%- if loop.last and running_count == 0 %}

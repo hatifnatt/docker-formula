@@ -18,6 +18,7 @@
 * [docker.compose.shell_completion](#docker.compose.shell_completion)
 * [docker.volumes](#docker.volumes)
 * [docker.networks](#docker.networks)
+* [docker.images](#docker.images)
 * [docker.containers](#docker.containers)
 
 ### docker
@@ -151,6 +152,10 @@ docker:
 ### docker.networks
 
 Стейт для управления `docker networks`
+
+### docker.images
+
+Стейт для управления `docker images`
 
 ### docker.containers
 

@@ -4,5 +4,6 @@ include:
   - .server.config
   - .volumes
   - .networks
+  - .images
   - .containers
   - .compose
