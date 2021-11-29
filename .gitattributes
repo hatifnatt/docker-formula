@@ -1,0 +1,4 @@
+# Manual selection for syntax highlighting. Docs: https://docs.gitlab.com/ee/user/project/highlighting.html
+*.sls           gitlab-language=jinja?parent=yaml
+*.jinja         gitlab-language=jinja
+*pillar.example gitlab-language=jinja?parent=yaml
