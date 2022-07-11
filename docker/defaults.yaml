@@ -71,3 +71,9 @@ docker:
   networks: {}
   images: {}
   containers: {}
+  file:
+    directory: {}
+    recurse: {}
+    managed: {}
+    serialize_packages: {}
+    serialize: {}

@@ -3,6 +3,8 @@
 {%- from tplroot ~ '/macros.jinja' import format_kwargs %}
 
 include:
+  {#- docker.volumes.manage includes all docker.file.* states
+      so they will be rendered before `docker_container.running` states #}
   - {{ tplroot }}.volumes.manage
   - {{ tplroot }}.networks.manage
   {#- Explicitly include states, due bug https://github.com/saltstack/salt/issues/10852 #}

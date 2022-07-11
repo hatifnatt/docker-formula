@@ -1,3 +1,4 @@
+---
 docker:
   # repository setting, will differ for diffirent os families, see osfamilymap for example
   repo: {}
@@ -281,3 +282,118 @@ docker:
       publish:
         - 9000:9000
         - 8000:8000
+  # manage [configuration] files
+  # basically it's a wrapper for file.directory, file.recurse, file.managed, file.serialize
+  file:
+    directory: {}
+    recurse: {}
+    managed:
+      # uniq file id
+      my_file_id:
+        # ensure mode (optional) - 'present' or 'absent', file will be created or removed respectively
+        # default is 'present'
+        ensure: present
+        # full path on the target minion
+        name: /opt/myapp/myfile.conf
+        # use source file
+        #source: salt://myapp/myfile.conf
+        # OR
+        # contents / contents_pillar
+        contents: |
+            config_option_one = value
+            config_option_two = another value
+        # any other file.managed options
+        makedirs: true
+        mode: "0644"
+        # you can trigger container recreation on changes in file
+        watch_in:
+          # template for item in list is `docker_container: docker_containers_running_<container id>`
+          # without angle brackets around `container id`
+          - docker_container: docker_containers_running_mycontainer
+    serialize: {}
+    # install aditional packages required by serializer
+    # i.e. for toml serializer you need to install python3-toml on Debian 10+
+    # package name can vary dependig on your OS
+    serialize_packages:
+      - python3-toml
+
+---
+# static site hosting
+docker:
+  containers:
+    # containter id
+    nginx:
+      ensure: running
+      image: nginx:1.23.0
+      binds:
+        - /var/www/my_static_site:/usr/share/nginx/html:ro
+        - /opt/nginx/conf.d/gzip.conf:/etc/nginx/conf.d/gzip.conf:ro
+        - /opt/nginx/log:/var/log/nginx:rw
+      publish:
+        - 80:80
+  file:
+    # create directory for logs
+    directory:
+      nginx_logs:
+        ensure: present
+        name: /opt/nginx/log
+        makedirs: true
+    # copy static site contents to the docker host
+    recurse:
+      nginx_my_static_site:
+        ensure: present
+        name: /var/www/my_static_site
+        # put you static site contents on the salt file server
+        source: salt://nginx/my_static_site
+    # create extra configuratioon file for nginx
+    managed:
+      nginx_gzip.conf:
+        ensure: present
+        name: /opt/nginx/conf.d/gzip.conf
+        makedirs: true
+        contents: |
+            gzip on;
+            gzip_vary on;
+            gzip_proxied any;
+            gzip_comp_level 6;
+            gzip_min_length 1024;
+            gzip_buffers 16 8k;
+            gzip_http_version 1.1;
+            gzip_types text/plain text/css text/javascript text/xml application/json application/javascript application/xml application/xml+rss;
+        # you can trigger container recreation on changes in file
+        watch_in:
+          # template for item in list is `docker_container: docker_containers_running_<container id>`
+          # without angle brackets around `container id`
+          - docker_container: docker_containers_running_nginx
+
+---
+# traefik with yaml config file
+docker:
+  containers:
+    traefik:
+      ensure: running
+      name: traefik-proxy
+      image: traefik:latest
+      restart_policy: always
+      binds:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+        - /opt/traefik/traefik.yml:/etc/traefik/traefik.yml
+      publish:
+        - 8080:8080
+  file:
+    serialize:
+      traefik_config:
+        ensure: present
+        name: /opt/traefik/traefik.yml
+        makedirs: true
+        dataset:
+          # Docker configuration backend
+          providers:
+            docker:
+              # {{ " ... " }} is necessary for use gotemplate inside Jinja
+              # and Salt process most thing through Jinja renderer i.e. sls files with pillar data
+              defaultRule: {{ "Host(`{{ trimPrefix `/` .Name }}.docker.localhost`)" }}
+              watch: true
+          # API and dashboard configuration
+          api:
+            insecure: true

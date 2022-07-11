@@ -4,22 +4,31 @@
 
 ## Доступные стейты
 
-* [docker](#docker)
-* [docker.repo](#docker.repo)
-* [docker.server](#docker.server)
-* [docker.server.config](#docker.server.config)
-* [docker.server.tls](#docker.server.tls)
-* [docker.server.service](#docker.server.service)
-* [docker.server.software.binary](#docker.server.software.binary)
-* [docker.server.software.package](#docker.server.software.package)
-* [docker.server.software.pip](#docker.server.software.pip)
-* [docker.compose](#docker.compose)
-* [docker.compose.software](#docker.compose.software)
-* [docker.compose.shell_completion](#docker.compose.shell_completion)
-* [docker.volumes](#docker.volumes)
-* [docker.networks](#docker.networks)
-* [docker.images](#docker.images)
-* [docker.containers](#docker.containers)
+* [docker formula](#docker-formula)
+  * [Доступные стейты](#доступные-стейты)
+    * [docker](#docker)
+    * [docker.repo](#dockerrepo)
+    * [docker.server](#dockerserver)
+    * [docker.server.config](#dockerserverconfig)
+    * [docker.server.tls](#dockerservertls)
+    * [docker.server.service](#dockerserverservice)
+    * [docker.server.software.binary](#dockerserversoftwarebinary)
+    * [docker.server.software.package](#dockerserversoftwarepackage)
+    * [docker.server.software.pip](#dockerserversoftwarepip)
+    * [docker.compose](#dockercompose)
+    * [docker.compose.software](#dockercomposesoftware)
+    * [docker.compose.shell_completion](#dockercomposeshell_completion)
+    * [docker.volumes](#dockervolumes)
+    * [docker.networks](#dockernetworks)
+    * [docker.images](#dockerimages)
+    * [docker.containers](#dockercontainers)
+    * [docker.file](#dockerfile)
+      * [docker.file.directory](#dockerfiledirectory)
+      * [docker.file.recurse](#dockerfilerecurse)
+      * [docker.file.managed](#dockerfilemanaged)
+      * [docker.file.serialize](#dockerfileserialize)
+  * [Известные проблемы](#известные-проблемы)
+  * [TODO](#todo)
 
 ### docker
 
@@ -160,6 +169,26 @@ docker:
 ### docker.containers
 
 Стейт для управления контейнерами docker.
+
+### docker.file
+
+Управление файлами и директориями. С помощью данных стейтов возможно подготовить конфигурационный файл на освнове данных из пиллар, создать каталог для сохранения логов, загрузить набор произвольных файлов на минион, например каталог со статическим сайтом.
+
+#### docker.file.directory
+
+Обертка над `file.directory`
+
+#### docker.file.recurse
+
+Обертка над `file.recurse`
+
+#### docker.file.managed
+
+Обертка над `file.managed`
+
+#### docker.file.serialize
+
+Обертка над `file.serialize`
 
 ## Известные проблемы
 
