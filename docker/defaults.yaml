@@ -48,7 +48,7 @@ docker:
   compose:
     install: true
     install_method: binary
-    version: 1.29.0
+    version: 1.29.2
     bin: /usr/local/bin/docker-compose
     version_dir: /usr/local/lib/docker-compose
     shell_completion:
