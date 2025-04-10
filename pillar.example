@@ -27,7 +27,9 @@ docker:
       pkgs:
         # python-docker package is mandatory (where available),
         # required for salt to communicate with docker daemon
-        - python3-docker
+        # Since Salt 3006 onedir bundled pip will be used as main tool to install extra Python modules for Salt
+        # for 'non onedir' Salt installations python3-docker is still required
+        # - python3-docker
         - iptables
         - procps
         - pigz
@@ -38,7 +40,12 @@ docker:
     # by default pip packages are used on RedHat family systems only
     pip:
       # system package with pip utility
-      package: python3-pip
+      # since Salt 3006 onedir is a main installation variant for Salt and Salt onedir does have bundled pip
+      # so additional package in not required in this case.
+      # package: python3-pip
+      package: ''
+      # Salt onedir will use bundled pip and will install pip packages into Salt onedir venv, that's exactly what we need,
+      # in this formula we only using pip to install extra Python modules (packages) solely for Salt itself
       # list of packages to install with pip
       pkgs:
         - docker

@@ -17,7 +17,7 @@
   * [docker.server.software.pip](#dockerserversoftwarepip)
   * [docker.compose](#dockercompose)
   * [docker.compose.software](#dockercomposesoftware)
-  * [docker.compose.shell_completion](#dockercomposeshell_completion)
+  * [docker.compose.shell\_completion](#dockercomposeshell_completion)
   * [docker.volumes](#dockervolumes)
   * [docker.networks](#dockernetworks)
   * [docker.images](#dockerimages)
@@ -141,6 +141,9 @@ docker:
 ### docker.server.software.pip
 
 Стейт для установки `pip` пакетов. Предварительно будет установлена сама `pip` утилита.
+`pip` используется исключительно для установки дополнительных библиотек Python для самого Salt, в данном случае нужна библиотека [docker](https://pypi.org/project/docker/) для взаимодействия между Salt и Docker.
+
+Начниая с Salt 3006 основной вариант поставки Salt это `onedir` [What is onedir?](https://docs.saltproject.io/salt/install-guide/en/latest/topics/upgrade-to-onedir.html#what-is-onedir) в данном варианте в дистрибутив Salt уже входит утилита `pip` поэтому установка системного пакета с `pip` не требуется.
 
 ### docker.compose
 

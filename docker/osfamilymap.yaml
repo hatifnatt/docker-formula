@@ -24,7 +24,9 @@ Debian:
         # python-docker package is mandatory, required for salt to communicate with docker daemon
         # but it have dependencies (python3-dockerpycreds -> golang-docker-credential-helpers)
         # which cause issues with 'docker login'
-        - python3-docker
+        # Since Salt 3006 onedir bundled pip will be used as main tool to install extra Python modules for Salt
+        # for 'non onedir' Salt installations python3-docker is still required
+        # - python3-docker
         - iptables
         - procps
         - pigz
@@ -39,6 +41,16 @@ Debian:
         # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=910823
         # https://stackoverflow.com/questions/51222996/docker-login-fails-on-a-server-with-no-x11-installed
         - pass
+    pip:
+      # system package with pip utility
+      # since Salt 3006 onedir is a main installation variant for Salt and Salt onedir does have bundled pip
+      # so additional package in not required in this case.
+      package: ''
+      # Salt onedir will use bundled pip and will install pip packages into Salt onedir venv, that's exactly what we need,
+      # in this formula we only using pip to install extra Python modules (packages) solely for Salt itself
+      # list of packages to install with pip
+      pkgs:
+        - docker
 
 RedHat:
   repo:
@@ -65,6 +77,8 @@ RedHat:
     # i.e. python-docker package is not available or too old on CentOS, RedHat
     # https://github.com/saltstack/salt/issues/58920#issuecomment-726328964
     pip:
-      package: python3-pip
+      # above statement is irrelevant since Salt 3006 onedir so by default no extra pip package required
+      # package: python3-pip
+      package: ''
       pkgs:
         - docker
