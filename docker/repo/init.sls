@@ -1,23 +1,18 @@
 {%- set tplroot = tpldir.split('/')[0] %}
 {%- from tplroot ~ '/map.jinja' import docker as d %}
-{%- from tplroot ~ '/macros.jinja' import format_kwargs %}
-
-{%- if d.repo.prerequisites and d.server.use_upstream in ('repo', 'package') %}
-docker_repo_prerequisites:
-  pkg.installed:
-    - pkgs: {{ d.repo.prerequisites|tojson }}
-    - require_in:
-      - pkgrepo: docker_repo
-{%- endif %}
 
 {#- If docker:server:use_upstream is 'repo' or 'package' official repo
     will be configured in other cases repo will be removed from the system #}
-docker_repo:
-  pkgrepo:
-{%- if d.server.use_upstream in ('repo', 'package') %}
-    - managed
-    {{- format_kwargs(d.repo.config) }}
-{%- else %}
-    - absent
-    - name: {{ d.repo.config.name }}
-{%- endif %}
+include:
+  {%- if d.server.use_upstream in ('repo', 'package') %}
+  - .install
+  {%- else %}
+  - .clean
+  {%- endif %}
+
+# Workaround for issue https://github.com/saltstack/salt/issues/65080
+# require will fail if a requisite only include other .sls
+# Adding dummy state as a workaround
+docker_repo_install_init_dummy:
+  test.show_notification:
+    - text: "Workaround for salt issue #65080"

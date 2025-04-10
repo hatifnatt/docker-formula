@@ -5,9 +5,18 @@ Debian:
       - apt-transport-https
       - ca-certificates
     config:
-      name: deb [arch=amd64] https://download.docker.com/linux/{{ grains.os|lower }} {{ grains.oscodename }} stable
+      # provided keyring file will be saved 'as is' in /etc/apt/keyrings/docker.asc
+      # use this path for 'signed-by' value
+      keyring: https://download.docker.com/linux/debian/gpg
+      # sha256 hash for https://download.docker.com/linux/debian/gpg at 2025.04.10
+      # if keyring_source_hash is not provided skip_verify: true will be used
+      keyring_source_hash: sha256=1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570
+      name: >
+        deb [arch={{ grains.osarch }} signed-by=/etc/apt/keyrings/docker.asc]
+        https://download.docker.com/linux/{{ grains.os|lower }} {{ grains.oscodename }} stable
       file: /etc/apt/sources.list.d/docker.list
-      key_url: https://download.docker.com/linux/{{ grains.os|lower }}/gpg
+      # apt-key is deprecated
+      # key_url: https://download.docker.com/linux/{{ grains.os|lower }}/gpg
       refresh: true
   server:
     extra:
