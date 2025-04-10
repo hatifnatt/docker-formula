@@ -16,6 +16,8 @@ docker:
         - docker-ce
         - docker-ce-cli
         - containerd.io
+        - docker-buildx-plugin
+        - docker-compose-plugin
       hold: false
       update_holds: true
     # install extra dependencies required for docker daemon to operate properly
@@ -156,7 +158,9 @@ docker:
   # docker-compose related data
   compose:
     # install or not docker-compose
-    install: true
+    # docker-compose v1 is concidered deprecated
+    # docker compose v2 is a docker plugin and can be installed as a regular system package
+    install: false
     # docker-compose installation methon
     # only binary implemented for now, due lack of alternatives
     install_method: binary
@@ -170,7 +174,7 @@ docker:
     # https://docs.docker.com/compose/completion/
     shell_completion:
       bash:
-        install: true
+        install: false
         # system bash-completion package
         package: bash-completion
         # source with bash-completion script for docker-compose, will be used 'as is'

@@ -67,6 +67,6 @@ docker_compose_software_binary_install_notice:
     - text: |
         docker-compose not selected for installation, current value
         for 'docker:compose:install': {{ d.compose.install|string|lower }},
-        if you want to install docker-compose you need to set it to 'true'.
+        if you want to install LEGACY docker-compose v1 you need to set it to 'true'.
 
 {%- endif %}

@@ -8,6 +8,8 @@ docker:
         - docker-ce
         - docker-ce-cli
         - containerd.io
+        - docker-buildx-plugin
+        - docker-compose-plugin
       hold: false
       update_holds: true
     extra: {}
@@ -46,14 +48,16 @@ docker:
         source: ''
         content: ''
   compose:
-    install: true
+    # docker-compose v1 is considered deprecated
+    # docker compose v2 is a docker plugin and can be installed as a regular system package
+    install: false
     install_method: binary
     version: 1.29.2
     bin: /usr/local/bin/docker-compose
     version_dir: /usr/local/lib/docker-compose
     shell_completion:
       bash:
-        install: true
+        install: false
         package: bash-completion
         source: ''
         # default source is: %download_remote%/%version%/%remote_path%
