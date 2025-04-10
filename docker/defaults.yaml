@@ -27,6 +27,9 @@ docker:
       # NOTE if configuration related to docker daemon sockets is changed
       # full restart is required - 'reload: false' must be used
       reload: true
+      # On systems that use systemd to start the Docker daemon, -H is already set,
+      # so you can't use the 'hosts' key in daemon.json to add listening addresses.
+      # Removing '-H' from daemon startup args will allow to use 'hosts' key in daemon.json configuration
       daemon_args:
         - '--containerd=/run/containerd/containerd.sock'
     tls:
