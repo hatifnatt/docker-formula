@@ -110,7 +110,7 @@ docker_server_tls_cert_selfsigned_cert:
     - mode: 440
     {{- format_kwargs(d.server.tls.cert.params) }}
     - require:
-      - pkg: docker_server_tls_prereq_packages
+      - pkg: docker_server_tls_packages_required
       - file: docker_server_tls_cert_dir
       - sls: {{ tplroot }}.server.tls.key
     - watch_in:

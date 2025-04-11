@@ -107,7 +107,7 @@ docker_server_tls_key_selfsigned_key:
     - mode: 440
     {{- format_kwargs(d.server.tls.key.params) }}
     - require:
-      - pkg: docker_server_tls_prereq_packages
+      - pkg: docker_server_tls_packages_required
       - file: docker_server_tls_key_dir
     - watch_in:
       - service: docker_server_service_running
