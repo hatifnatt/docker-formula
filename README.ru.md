@@ -119,6 +119,20 @@ docker:
         source: /etc/ssl/certs/ca-certificates.crt
 ```
 
+**Заметки для Salt 3006**
+
+В Salt 3006 был добавлен новый модуль `x509_v2` <https://docs.saltproject.io/en/3006/ref/modules/all/salt.modules.x509_v2.html>, в простых случаях, например, при выпуске самоподписного сертификата, он является прямой заменой для старого модуля `x509`. Главный плюс нового модуля - он использует библиотеку [cryptography](https://pypi.org/project/cryptography/)
+которая уже включена в поставку Salt onedir, а не [M2Crypto](https://pypi.org/project/M2Crypto/), которую не так уж просто установить в `onedir` инсталляцию Salt. Для того чтоб начать использовать новый модуль достаточно включить его в настрйоках миньона.
+
+```yaml
+# /etc/salt/minion.d/x509.conf
+
+features:
+  x509_v2: true
+```
+
+При использовании модуля `x509_v2` нет необходимости устанавливать библиотеку `M2Crypto`, поэтому пакет `python3-m2crypto` удален из списка пакетов необходимых для работы `docker.server.tls`.
+
 ### docker.server.service
 
 Стейт отвечающий за настройку и запуск сервиса docker.

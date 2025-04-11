@@ -35,7 +35,9 @@ docker:
     tls:
       pkgs:
         - openssl
-        - python3-m2crypto
+        # not required when using Salt 3006 onedir and x509_v2 module
+        # don't forget to enable x509_v2 in minion settings
+        # - python3-m2crypto
       key:
         symlink: false
         source: ''

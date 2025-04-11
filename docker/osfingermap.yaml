@@ -1,10 +1,26 @@
 ---
 # os: Debian
+Debian-12:
+  server:
+    tls:
+      pkgs:
+        - openssl
+
+Debian-11:
+  server:
+    tls:
+      pkgs:
+        - openssl
+        # not required when using Salt 3006 onedir and x509_v2 module
+        # don't forget to enable x509_v2 in minion settings
+        # - python3-m2crypto
+
 Debian-10:
   server:
     tls:
       pkgs:
         - openssl
+        # Preserving python3-m2crypto for systems on Debian 10 where most probably older version of Salt is used
         - python3-m2crypto
   repo:
     config:
