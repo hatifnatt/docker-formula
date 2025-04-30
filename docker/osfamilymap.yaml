@@ -40,7 +40,14 @@ Debian:
         # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=910822
         # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=910823
         # https://stackoverflow.com/questions/51222996/docker-login-fails-on-a-server-with-no-x11-installed
-        - pass
+        #
+        # Upd 2025.04.30
+        # It seems problem is fixed in recent versions of 'python-docker',
+        # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=910823#49
+        # also since Salt 3006 pip 'docker' package is required, not system package.
+        # Also with 'pass' package in Debian 12 125 extra packages will be installed.
+        # Considering all the factors removing 'pass' from default packages list.
+        #- pass
     pip:
       # system package with pip utility
       # since Salt 3006 onedir is a main installation variant for Salt and Salt onedir does have bundled pip
