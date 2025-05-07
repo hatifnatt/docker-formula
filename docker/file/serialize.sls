@@ -10,6 +10,17 @@ docker_file_serialize_packages:
 
 {%- endif %}
 
+{%- if 'serialize_packages_pip' in d.file and d.file.serialize_packages_pip %}
+  {#- By default if bin_env parameter is not set Salt onedir will use bundled pip and will install pip packages
+      into Salt onedir venv, that's exactly what we need, in this formula we only using pip to install
+      extra Python modules (packages) solely for Salt itself #}
+docker_file_serialize_packages_pip:
+  pip.installed:
+    - pkgs: {{ d.file.serialize_packages_pip | tojson }}
+    - reload_modules: true
+
+{%- endif %}
+
 {%- if 'serialize' in d.file and d.file.serialize %}
   {%- for id, serialize in d.file.serialize|dictsort %}
     {%- set ensure = serialize.pop('ensure', 'present') %}
@@ -25,9 +36,10 @@ docker_file_serialize_{{ id }}:
   file.serialize:
     - name: {{ name }}
     {{- format_kwargs(serialize) }}
-      {%- if 'serialize_packages' in d.file and d.file.serialize_packages %}
+      {%- if 'serialize_packages' in d.file and d.file.serialize_packages
+              or 'serialize_packages_pip' in d.file and d.file.serialize_packages_pip %}
     - require:
-      - pkg: docker_file_serialize_packages
+      - pkg: docker_file_serialize_packages*
       {%- endif %}
 
     {%- endif %}

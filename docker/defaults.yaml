@@ -85,4 +85,5 @@ docker:
     recurse: {}
     managed: {}
     serialize_packages: {}
+    serialize_packages_pip: {}
     serialize: {}

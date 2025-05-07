@@ -332,6 +332,9 @@ docker:
     # package name can vary dependig on your OS
     serialize_packages:
       - python3-toml
+    # for Salt 3006+ it's required to install packages via pip
+    serialize_packages_pip:
+      - toml
 
 ---
 # static site hosting
