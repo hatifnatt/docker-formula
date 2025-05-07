@@ -39,7 +39,7 @@ docker_file_serialize_{{ id }}:
       {%- if 'serialize_packages' in d.file and d.file.serialize_packages
               or 'serialize_packages_pip' in d.file and d.file.serialize_packages_pip %}
     - require:
-      - pkg: docker_file_serialize_packages*
+      - docker_file_serialize_packages*
       {%- endif %}
 
     {%- endif %}
