@@ -24,6 +24,33 @@ docker_server_service_reload_systemd:
   {%- else %}
     - name: service.systemctl_reload
   {%- endif %}
+
+docker_server_service_socket:
+  service:
+    - name: {{ d.server.service.socket.name }}
+    - {{ d.server.service.status }}
+    - enable: {{ d.server.service.enable }}
+    - require:
+      - service: docker_server_service_running
+
+# If docker.socket seems running but socket file is not present - restart docker.socket
+# this happens after fresh installation of the official docker packages on Deb 12 and 13
+docker_server_service_socket_restart:
+  module.run:
+  {#- Workaround for deprecated `module.run` syntax, subject to change in Salt 3005 #}
+  {%- if 'module.run' in salt['config.get']('use_superseded', [])
+      or grains['saltversioninfo'] >= [3005] %}
+    - service.restart:
+      - name: docker.socket
+  {%- else %}
+    - name: service.systemctl_reload
+    - m_name: docker.socket
+  {%- endif %}
+    - unless:
+      - 'test -S {{ d.server.service.socket.path }}'
+    - require:
+      - service: docker_server_service_running
+      - service: docker_server_service_socket
 {%- endif %}
 
 docker_server_service_running:

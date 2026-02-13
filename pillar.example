@@ -96,6 +96,14 @@ docker:
       # Removing '-H' from daemon startup args will allow to use 'hosts' key in daemon.json configuration
       daemon_args:
         - '--containerd=/run/containerd/containerd.sock'
+      # Manage docker.socket
+      socket:
+        name: docker.socket
+        path: /run/docker.sock
+        # to stay in sync with docker.service
+        # docker.service 'status' and 'enable' parameters will be used for docker.socket too
+        # status: ''
+        # enable: ''
     tls:
       # packages required to issue self signed certificates
       pkgs:
