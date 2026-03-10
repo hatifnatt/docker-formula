@@ -12,6 +12,7 @@ docker:
         - docker-compose-plugin
       hold: false
       update_holds: true
+      install_recommends: true
     extra: {}
     pip: {}
     binary: {}

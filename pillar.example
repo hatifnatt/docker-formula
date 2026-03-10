@@ -20,6 +20,7 @@ docker:
         - docker-compose-plugin
       hold: false
       update_holds: true
+      install_recommends: true
     # install extra dependencies required for docker daemon to operate properly
     # they will be installed *before* main package(s)
     extra:

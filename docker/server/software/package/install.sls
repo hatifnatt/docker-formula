@@ -27,6 +27,9 @@ docker_server_software_package_install:
     - pkgs: {{ d.server.package.pkgs|tojson }}
     - hold: {{ d.server.package.hold }}
     - update_holds: {{ d.server.package.update_holds }}
+    {%- if salt['grains.get']('os_family') == 'Debian' %}
+    - install_recommends: {{ d.server.package.install_recommends }}
+    {%- endif %}
     - watch_in:
       - service: docker_server_service_running
     - require:
