@@ -9,6 +9,7 @@
   {%- if d.server.use_upstream in ('repo', 'package') %}
 include:
   - {{ tplroot }}.repo
+  - {{ tplroot }}.server.software.package.pin
     {%- if 'pip' in d.server and d.server.pip %}
   - {{ tplroot }}.server.software.pip
     {%- endif %}
@@ -24,7 +25,11 @@ docker_server_software_package_install_extra:
 
 docker_server_software_package_install:
   pkg.installed:
-    - pkgs: {{ d.server.package.pkgs|tojson }}
+    - pkgs:
+    {%- for pkg in d.server.package.pkgs %}
+      {#- add version to the docker-ce* packages #}
+      - {{ pkg }}{% if 'version' in d.server and d.server.version and d.server.package.get('pin_pkgs_prefix', 'docker-ce') in pkg %}: '{{ d.server.version }}'{% endif %}
+    {%- endfor %}
     - hold: {{ d.server.package.hold }}
     - update_holds: {{ d.server.package.update_holds }}
     {%- if salt['grains.get']('os_family') == 'Debian' %}

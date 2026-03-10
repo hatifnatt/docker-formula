@@ -2,11 +2,15 @@ docker:
   repo: {}
   server:
     install: true
+    # version: ''
     use_upstream: repo # repo, package / binary, binary is not implemented
     package:
+      pin: false
+      pin_pkgs_prefix: docker-ce
       pkgs:
         - docker-ce
         - docker-ce-cli
+        - docker-ce-rootless-extras
         - containerd.io
         - docker-buildx-plugin
         - docker-compose-plugin

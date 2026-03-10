@@ -6,15 +6,50 @@ docker:
   server:
     # install or not docker server (daemon)
     install: true
+    # docker-ce* packages version
+    version: '5:28.*'
     # installation method for docker server
     # repo, package - install form official repo with system packages (deb, rpm)
     # binary - install via official pre compiled static binaries, *not implemented yet*
     use_upstream: repo
     # parameters for package installation method, official Docker repository will be used
     package:
+      # pin docker packages to specific version using apt pinning config file /etc/apt/preferences.d/docker
+      pin: false
+      # start of the packages name to pin
+      pin_pkgs_prefix: docker-ce
+      # variants of packages list
+      #
+      # without version - latest version will be installed
+      #pkgs:
+      #  - docker-ce
+      #  - docker-ce-cli
+      #  - docker-ce-rootless-extras
+      #  - containerd.io
+      #  - docker-buildx-plugin
+      #  - docker-compose-plugin
+      #
+      # when docker.server.version is set it will be added to every docker-ce* package
+      # i.e. if 'docker.server.version: 5:28.*' list above will became
+      #pkgs:
+      #  - docker-ce: 5:28.*
+      #  - docker-ce-cli: 5:28.*
+      #  - docker-ce-rootless-extras: 5:28.*
+      #  - containerd.io
+      #  - docker-buildx-plugin
+      #  - docker-compose-plugin
+      #
+      # set docker.server.version to empty string (version: '')
+      # if you want to specify version for each package individually
+      #pkgs:
+      #  - docker-ce: 5:28.*
+      #  - docker-ce-cli: 5:28.*
+      #  - containerd.io: 2.2.1*
+      #
       pkgs:
         - docker-ce
         - docker-ce-cli
+        - docker-ce-rootless-extras
         - containerd.io
         - docker-buildx-plugin
         - docker-compose-plugin
